@@ -1,9 +1,15 @@
 # coding=utf-8
 
 from scrapely import Scraper
+import boto3
 import re
+import os
 
 cleanr = re.compile('<.*?>')
+
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+AWS_S3_BUCKET_NAME = os.environ.get('AWS_S3_BUCKET_NAME')
 
 
 def strip_html(text):
@@ -23,9 +29,14 @@ def clean(text):
     return text
 
 s = Scraper()
+s3client = boto3.client(
+    's3',
+    aws_access_key_id=AWS_ACCESS_KEY_ID,
+    aws_secret_access_key=AWS_SECRET_ACCESS_KEY
+)
 
-url1 = 'https://s3-us-west-2.amazonaws.com/bcsaris/2007/AutoSave_10.htm'
-data = {
+training_url = s3client.generate_presigned_url('get_object', {'Bucket': AWS_S3_BUCKET_NAME, 'Key': '2007/AutoSave_10.htm'})
+training_data = {
     'Task Number': '074566',
     'SAR Manager': 'Ron Royston',
     'Reporting SAR Group': 'North Shore Rescue',
@@ -40,10 +51,14 @@ data = {
     # 'Latitude': '49 ° 23.28\' N HDD.DDD',
     # 'Longitude': '\r\n122 ° 56.53\' W HDD.DDD'
 }
-s.train(url1, data)
+s.train(training_url, training_data)
 
-url2 = 'https://s3-us-west-2.amazonaws.com/bcsaris/2007/AutoSave_11.htm'
-results = s.scrape(url2)
+objects = s3client.list_objects(Bucket=AWS_S3_BUCKET_NAME)
+file_keys = [x['Key'] for x in objects['Contents']]
 
-for k, v in results[0].items():
-    print '%s: %s' % (k, clean(v[0]))
+for file_key in file_keys:
+    url = s3client.generate_presigned_url('get_object', {'Bucket': AWS_S3_BUCKET_NAME, 'Key': file_key})
+    results = s.scrape(url)
+
+    for k, v in results[0].items():
+        print '%s: %s' % (k, clean(v[0]))
