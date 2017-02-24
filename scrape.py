@@ -2,22 +2,22 @@
 
 from scrapely import Scraper
 import boto3
-import re
 import os
+import re
+import requests
 
-cleanr = re.compile('<.*?>')
 
+# AWS Settings
 AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
 AWS_S3_BUCKET_NAME = os.environ.get('AWS_S3_BUCKET_NAME')
 
+# AWS File keys for training data
+TRAINING_FILE_KEY = os.environ.get('TRAINING_FILE_KEY', 'Training/example.html')
+TRAINING_DATA_KEY = os.environ.get('TRAINING_DATA_KEY', 'Training/data.json')
 
-def strip_html(text):
-    """
-    RemoveHTML tags from a piece of text.
-    """
-    text = re.sub(cleanr, '', text)
-    return text
+
+cleanr = re.compile('<.*?>')
 
 
 def clean(text):
@@ -25,40 +25,29 @@ def clean(text):
     Remove html tags and whitespace from a piece of text.
     """
     text = text.strip()
-    text = strip_html(text)
+    text = re.sub(cleanr, '', text)
     return text
 
-s = Scraper()
+scraper = Scraper()
 s3client = boto3.client(
     's3',
     aws_access_key_id=AWS_ACCESS_KEY_ID,
     aws_secret_access_key=AWS_SECRET_ACCESS_KEY
 )
 
-training_url = s3client.generate_presigned_url('get_object', {'Bucket': AWS_S3_BUCKET_NAME, 'Key': '2007/AutoSave_10.htm'})
-training_data = {
-    'Task Number': '074566',
-    'SAR Manager': 'Ron Royston',
-    'Reporting SAR Group': 'North Shore Rescue',
-    'Contact Phone #': '604-443-2122',
-    'Incident Location': 'Mount Seymour, North Vancouver',
-    'Incident Province': 'British Columbia',
-    'RCMP Number': '2007-087',
-    'Tasking agency': 'File or response number',
-    'Incident Occured': '2007/01/01 12:00',
-    'First Response': '2007/01/01 12:09',
-    'Resolved': '2007/01/01 22:10',
-    # 'Latitude': '49 ° 23.28\' N HDD.DDD',
-    # 'Longitude': '\r\n122 ° 56.53\' W HDD.DDD'
-}
-s.train(training_url, training_data)
+
+training_file_url = s3client.generate_presigned_url('get_object', {'Bucket': AWS_S3_BUCKET_NAME, 'Key': TRAINING_FILE_KEY})
+training_data_file_url = s3client.generate_presigned_url('get_object', {'Bucket': AWS_S3_BUCKET_NAME, 'Key': TRAINING_DATA_KEY})
+training_data = requests.get(training_data_file_url).json()
+
+scraper.train(training_file_url, training_data)
 
 objects = s3client.list_objects(Bucket=AWS_S3_BUCKET_NAME)
 file_keys = [x['Key'] for x in objects['Contents']]
 
 for file_key in file_keys:
     url = s3client.generate_presigned_url('get_object', {'Bucket': AWS_S3_BUCKET_NAME, 'Key': file_key})
-    results = s.scrape(url)
+    results = scraper.scrape(url)
 
     for k, v in results[0].items():
         print '%s: %s' % (k, clean(v[0]))
