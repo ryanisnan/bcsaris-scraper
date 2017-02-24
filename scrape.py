@@ -2,7 +2,7 @@
 
 from scrapely import Scraper
 import boto3
-import csv
+import unicodecsv as csv
 import os
 import re
 import requests
@@ -63,9 +63,9 @@ for file_key in file_keys:
     tasks.append(task)
 
 if tasks:
-    output_filename = raw_input('Where would you like the CSV output to be saved? \r\n')
+    output_filename = raw_input('Where would you like the CSV output to be saved? (default=output.csv)\r\n') or 'output.csv'
     with open(output_filename, 'wb') as csv_file:
-        csv_writer = csv.writer(csv_file, delimiter='\t')
+        csv_writer = csv.writer(csv_file, delimiter=',')
 
         keys = sorted(tasks[0].keys())  # Create some order for the keys so we can create deterministic output rows
         for task in tasks:
