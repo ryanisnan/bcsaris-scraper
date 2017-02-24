@@ -43,9 +43,20 @@ scraper.train(training_file_url, training_data)
 objects = s3client.list_objects(Bucket=AWS_S3_BUCKET_NAME)
 file_keys = [x['Key'] for x in objects['Contents']]
 
+tasks = []
 for file_key in file_keys:
     url = s3client.generate_presigned_url('get_object', {'Bucket': AWS_S3_BUCKET_NAME, 'Key': file_key})
-    results = scraper.scrape(url)
 
+    try:
+        results = scraper.scrape(url)
+    except:
+        print 'Failed to scrape %s' % file_key
+        continue
+    else:
+        print 'Scraped %s' % file_key
+
+    task = {}
     for k, v in results[0].items():
-        print '%s: %s' % (k, clean(v[0]))
+        task[k] = clean(v[0])
+
+    tasks.append(task)
