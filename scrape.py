@@ -2,6 +2,7 @@
 
 from scrapely import Scraper
 import boto3
+import csv
 import os
 import re
 import requests
@@ -41,7 +42,7 @@ training_data = requests.get(training_data_file_url).json()
 scraper.train(training_file_url, training_data)
 
 objects = s3client.list_objects(Bucket=AWS_S3_BUCKET_NAME)
-file_keys = [x['Key'] for x in objects['Contents']]
+file_keys = [x['Key'] for x in objects['Contents'] if x['Key'] not in [TRAINING_FILE_KEY, TRAINING_DATA_KEY]]
 
 tasks = []
 for file_key in file_keys:
@@ -60,3 +61,13 @@ for file_key in file_keys:
         task[k] = clean(v[0])
 
     tasks.append(task)
+
+if tasks:
+    output_filename = raw_input('Where would you like the CSV output to be saved? \r\n')
+    with open(output_filename, 'wb') as csv_file:
+        csv_writer = csv.writer(csv_file, delimiter='\t')
+
+        keys = sorted(tasks[0].keys())  # Create some order for the keys so we can create deterministic output rows
+        for task in tasks:
+            row = [task[key] for key in keys]
+            csv_writer.writerow(row)
