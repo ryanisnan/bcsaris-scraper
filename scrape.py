@@ -35,11 +35,9 @@ s3client = boto3.client(
     aws_secret_access_key=AWS_SECRET_ACCESS_KEY
 )
 
-
 training_file_url = s3client.generate_presigned_url('get_object', {'Bucket': AWS_S3_BUCKET_NAME, 'Key': TRAINING_FILE_KEY})
 training_data_file_url = s3client.generate_presigned_url('get_object', {'Bucket': AWS_S3_BUCKET_NAME, 'Key': TRAINING_DATA_KEY})
 training_data = requests.get(training_data_file_url).json()
-
 scraper.train(training_file_url, training_data)
 
 objects = s3client.list_objects(Bucket=AWS_S3_BUCKET_NAME)
