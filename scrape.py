@@ -25,7 +25,7 @@ def clean(text):
     """
     Remove html tags and whitespace from a piece of text.
     """
-    text = text.strip()
+    text = text.strip(' \t\n\r')
     text = re.sub(cleanr, '', text)
     return text
 
