@@ -1,16 +1,15 @@
 # coding=utf-8
 
+from fileutils import read_parsed_data
+from fileutils import write_csv_data
+from fileutils import write_parsed_data
 from s3utils import get_s3_file_url
 from s3utils import get_s3_task_file_keys
+from scrapely import Scraper
 from settings import TRAINING_DATA_KEY
 from settings import TRAINING_FILE_KEY
-from fileutils import read_parsed_data
-from fileutils import write_parsed_data
-from fileutils import write_csv_data
-from scrapely import Scraper
 import re
 import requests
-import unicodecsv as csv
 
 
 cleanr = re.compile('<.*?>')
