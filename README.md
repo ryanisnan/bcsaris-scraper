@@ -49,3 +49,14 @@ In this example training file, 3 attributes would be extracted from each task fi
 **Step 7) Run the scraper with `python scrape.py`**
 
 It currently oututs the contents into a JSON file on your local drive as well as a CSV file containing the data. It will allow you to choose your output destinations, and will persist data between successive runs.
+
+# Limitations
+
+The dependency on scrapely comes with certain limitations. For example, in the training file examples used above, if you defined the Task Number as 55555, Scrapely will "learn" where Task Numbers can be found on the page. If the string 55555 exists in multiple locations on the page, scrapely will become confused and it will break. It is therefor necessary to carefully construct your own training files usable as inputs to the tool.
+
+# Future Work
+
+Depending on the necessity for the tool, the following steps would be nice:
+
+1) Remove usage of S3 and the need for intermediary file hosting
+2) Provide ficticious, usable training data files
