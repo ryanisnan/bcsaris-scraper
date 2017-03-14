@@ -68,9 +68,9 @@ def write_csv_data(data):
 
     f = open(filepath, 'wb')
     writer = csv.writer(f)
-
+    writer.writerow(['File'] + sorted(data.items()[0][1].keys()))
     for k, v in data.items():
-        row = [v[k2] for k2 in sorted(v.keys())]
+        row = [k] + [v[k2] for k2 in sorted(v.keys())]
         writer.writerow(row)
 
     f.close()
