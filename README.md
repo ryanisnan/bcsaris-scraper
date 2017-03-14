@@ -40,9 +40,9 @@ Scrapely doesn't work like most HTML/XML parsers in that it doesn't require the 
 
 In this example training file, 3 attributes would be extracted from each task file. The training HTML file that you use must contain the data defined in the training JSON data. Note that only the values ("55555", "Justin Trudeau", "01 - Vigorous flapping of the arms") must exist in the training HTML file. The attribute names as defined in the training JSON file are arbitrary and only labeled sensibly for usability.
 
-**Step 4) Upload the training files to your S3 bucket.**
+**Step 4) Upload the training files to your S3 bucket**
 
-**Step 5) Set your environment variables* (see [settings.py](https://github.com/ryanisnan/bcsaris-scraper/master/settings.py))**
+**Step 5) Set your environment variables - see [settings.py](https://github.com/ryanisnan/bcsaris-scraper/master/settings.py))**
 
 **Step 6) Install the requirements using `pip install -r requirements.txt`**
 
