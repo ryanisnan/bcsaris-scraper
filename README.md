@@ -21,4 +21,4 @@ To run the scraper, simply run:
 
     python scrape.py
 
-It currently does nothing with the output, but will soon put it into a CSV or something of the like.
+It currently oututs the contents into a JSON file on your local drive as well as a CSV file containing the data.
