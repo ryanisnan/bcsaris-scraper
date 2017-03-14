@@ -4,21 +4,21 @@ from settings import AWS_S3_BUCKET_NAME
 import boto3
 
 
-_s3_client = None
+obj = {}
 
 
 def get_s3_client():
     """
     Return an S3 client. Uses the singleton pattern.
     """
-    if _s3_client is None:
-        _s3_client = boto3.client(
+    if not obj.get('s3_client'):
+        obj['s3_client'] = boto3.client(
             's3',
             aws_access_key_id=AWS_ACCESS_KEY_ID,
             aws_secret_access_key=AWS_SECRET_ACCESS_KEY
         )
 
-    return _s3_client
+    return obj['s3_client']
 
 
 def get_s3_file_url(file_key):
