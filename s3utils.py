@@ -1,6 +1,6 @@
-from .settings import AWS_ACCESS_KEY_ID
-from .settings import AWS_SECRET_ACCESS_KEY
-from .settings import AWS_S3_BUCKET_NAME
+from settings import AWS_ACCESS_KEY_ID
+from settings import AWS_SECRET_ACCESS_KEY
+from settings import AWS_S3_BUCKET_NAME
 import boto3
 
 
