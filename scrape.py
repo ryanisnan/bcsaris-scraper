@@ -29,6 +29,7 @@ def clean(text):
     text = re.sub(cleanr, '', text)
     return text
 
+
 scraper = Scraper()
 s3client = boto3.client(
     's3',
