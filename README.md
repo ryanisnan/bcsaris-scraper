@@ -18,7 +18,7 @@ The files must currently be hosted on AWS S3, and `TRAINING_FILE_KEY` and `TRAIN
 
 # How it works
 
-** Step 1) Save the task files from BCSARIS as .html files
+** Step 1) Save the task files from BCSARIS as .html files **
 
 The task files themselves can either be manually saved, or automatically saved as HTML file using a link crawler while authenticated to the BCSARIS system. The integration with the BCSARIS system is outside the current scope for this project, and does not directly deal with exporting the HTML files from BCSARIS.
 
