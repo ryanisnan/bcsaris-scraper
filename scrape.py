@@ -58,7 +58,8 @@ def main():
 
             if k == 'Task Number' and v.startswith('Task Number:&nbsp;'):
                 v = v.replace('Task Number:&nbsp;', '')
-                v = v.strip()
+
+            v = v.strip()
 
             task[k] = v
 
